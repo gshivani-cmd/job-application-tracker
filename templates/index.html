@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #243b64;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccd2dc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background: #3157c8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        button:hover {
+            background: #2444a5;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f3f9;
+        }
+
+        .message {
+            color: #176b37;
+            background: #e7f7ec;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .empty {
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Job Application Tracker</h1>
+        <p>Organize your internship and job applications in one place.</p>
+
+        {% for message in get_flashed_messages() %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+
+        <div class="card">
+            <h2>Add a New Application</h2>
+
+            <form action="{{ url_for('add_application') }}" method="POST">
+                <div class="form-grid">
+                    <div>
+                        <label for="company">Company Name *</label>
+                        <input id="company" name="company"
+                               required maxlength="150">
+                    </div>
+
+                    <div>
+                        <label for="role">Job Role *</label>
+                        <input id="role" name="role"
+                               required maxlength="150">
+                    </div>
+
+                    <div>
+                        <label for="application_date">Application Date *</label>
+                        <input type="date" id="application_date"
+                               name="application_date"
+                               value="{{ today }}" required>
+                    </div>
+
+                    <div>
+                        <label for="deadline">Application Deadline</label>
+                        <input type="date" id="deadline" name="deadline">
+                    </div>
+
+                    <div>
+                        <label for="status">Application Status</label>
+                        <select id="status" name="status">
+                            {% for status in statuses %}
+                                <option value="{{ status }}">{{ status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="job_url">Job Posting URL</label>
+                        <input type="url" id="job_url" name="job_url"
+                               placeholder="https://example.com/job">
+                    </div>
+
+                    <div>
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes"
+                                  rows="3" maxlength="2000"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit">Save Application</button>
+            </form>
+        </div>
+
+<div class="card">
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;">
+
+    <div style="background: #eaf2ff; padding: 20px; border-radius: 12px;">
+        <p style="margin: 0; color: #334155;">Total Applications</p>
+        <h2 style="margin: 10px 0 0;">{{ statistics['total'] }}</h2>
+    </div>
+
+    <div style="background: #fff4d6; padding: 20px; border-radius: 12px;">
+        <p style="margin: 0; color: #92400e;">Awaiting Response</p>
+        <h2 style="margin: 10px 0 0;">{{ statistics['awaiting_response'] }}</h2>
+    </div>
+
+    <div style="background: #e8f7ed; padding: 20px; border-radius: 12px;">
+        <p style="margin: 0; color: #166534;">Interviews</p>
+        <h2 style="margin: 10px 0 0;">{{ statistics['interviews'] }}</h2>
+    </div>
+
+    <div style="background: #f1eaff; padding: 20px; border-radius: 12px;">
+        <p style="margin: 0; color: #5b21b6;">Selected</p>
+        <h2 style="margin: 10px 0 0;">{{ statistics['selected'] }}</h2>
+    </div>
+
+</div>
+          
+<h2>Your Applications ({{ applications|length }})</h2>
+
+<form action="{{ url_for('home') }}" method="GET"
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+
+    <div>
+        <label for="search">Search company or role</label>
+        <input
+            type="search"
+            id="search"
+            name="search"
+            placeholder="e.g. Python Intern"
+            value="{{ search_query }}">
+    </div>
+
+    <div>
+        <label for="status_filter">Filter by status</label>
+        <select id="status_filter" name="status">
+            <option value=""
+                {% if not selected_status %}selected{% endif %}>
+                All Statuses
+            </option>
+
+            {% for status in statuses %}
+                <option value="{{ status }}"
+                    {% if selected_status == status %}selected{% endif %}>
+                    {{ status }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="align-self: end;">
+        <button type="submit">Search / Filter</button>
+        <a href="{{ url_for('home') }}"
+           style="margin-left: 8px;">Clear</a>
+    </div>
+</form>
+
+
+            {% if applications %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Role</th>
+                                <th>Applied On</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                                <th>Job Link</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                                <tr>
+                                    <td>{{ application["company"] }}</td>
+                                    <td>{{ application["role"] }}</td>
+                                    <td>{{ application["application_date"] }}</td>
+                                    <td>{{ application["deadline"] or "—" }}</td>
+                                    <td>{{ application["status"] }}</td>
+
+                                        
+<td>
+    {% if application["job_url"] %}
+        <a href="{{ application['job_url'] }}"
+           target="_blank" rel="noopener noreferrer">View Job</a>
+    {% else %}
+        —
+    {% endif %}
+</td>
+<td>
+    <a href="{{ url_for('edit_application', application_id=application['id']) }}">
+        Edit
+    </a>
+
+    <form action="{{ url_for('delete_application', application_id=application['id']) }}"
+          method="POST"
+          onsubmit="return confirm('Are you sure you want to delete this application?');"
+          style="display: inline;">
+        <button type="submit"
+                style="background: #dc3545; margin: 4px; padding: 8px 12px;">
+            Delete
+        </button>
+    </form>
+</td>
+
+                            
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="empty">No applications yet. Add your first one above!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

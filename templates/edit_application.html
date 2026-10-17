@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccd2dc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button, .cancel {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button {
+            background: #3157c8;
+            color: white;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Edit Application</h1>
+            <p>Update the details of your job application.</p>
+
+            <form method="POST">
+                <label for="company">Company Name *</label>
+                <input id="company" name="company"
+                       value="{{ application['company'] }}"
+                       maxlength="150" required>
+
+                <label for="role">Job Role *</label>
+                <input id="role" name="role"
+                       value="{{ application['role'] }}"
+                       maxlength="150" required>
+
+                <label for="application_date">Application Date *</label>
+                <input type="date" id="application_date"
+                       name="application_date"
+                       value="{{ application['application_date'] }}"
+                       required>
+
+                <label for="deadline">Application Deadline</label>
+                <input type="date" id="deadline" name="deadline"
+                       value="{{ application['deadline'] or '' }}">
+
+                <label for="status">Application Status</label>
+                <select id="status" name="status">
+                    {% for status in statuses %}
+                        <option value="{{ status }}"
+                            {% if status == application['status'] %}selected{% endif %}>
+                            {{ status }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="job_url">Job Posting URL</label>
+                <input type="url" id="job_url" name="job_url"
+                       value="{{ application['job_url'] or '' }}">
+
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes"
+                          rows="4" maxlength="2000">{{ application['notes'] or '' }}</textarea>
+
+                <button type="submit">Save Changes</button>
+                <a class="cancel" href="{{ url_for('home') }}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
