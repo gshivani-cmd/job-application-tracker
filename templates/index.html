@@ -5,15 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Application Tracker</title>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 30px;
-            color: #222;
-        }
-
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--background);
+        margin: 0;
+        padding: 30px 30px 90px 275px;
+        color: var(--text);
+        box-sizing: border-box;
+    }
+    
         .container {
             max-width: 1100px;
             margin: auto;
@@ -103,7 +106,9 @@
 
         @media (max-width: 600px) {
             body {
-                padding: 14px;
+                body {
+                    padding: 15px 15px 85px;
+                }
             }
 
             .form-grid {
@@ -113,6 +118,31 @@
     </style>
 </head>
 <body>
+    
+<aside class="app-sidebar">
+    <a href="/" class="sidebar-brand">
+        <span class="brand-icon">▣</span>
+        <span>Job Tracker</span>
+    </a>
+
+    <nav class="sidebar-nav">
+        <a href="/" class="sidebar-link active">
+            <span>⌂</span> Dashboard
+        </a>
+        <a href="#add-application" class="sidebar-link">
+            <span>＋</span> Add Application
+        </a>
+        <a href="#applications" class="sidebar-link">
+            <span>☷</span> All Applications
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <strong>Keep going!</strong>
+        <p>Every application brings you one step closer to your career goal.</p>
+    </div>
+</aside>
+
     <div class="container">
         <h1>My Job Application Tracker</h1>
         <p>Organize your internship and job applications in one place.</p>
@@ -124,7 +154,9 @@
         <div class="card">
             <h2>Add a New Application</h2>
 
-            <form action="{{ url_for('add_application') }}" method="POST">
+            <form id="add-application"
+                action="{{ url_for('add_application') }}"
+                method="POST">
                 <div class="form-grid">
                     <div>
                         <label for="company">Company Name *</label>
@@ -176,26 +208,27 @@
             </form>
         </div>
 
-<div class="card">
+<div id="applications" class="applications-card">
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;">
 
-    <div style="background: #eaf2ff; padding: 20px; border-radius: 12px;">
+    <div class="stat-card">
         <p style="margin: 0; color: #334155;">Total Applications</p>
         <h2 style="margin: 10px 0 0;">{{ statistics['total'] }}</h2>
     </div>
 
-    <div style="background: #fff4d6; padding: 20px; border-radius: 12px;">
+    <div class="stat-card">
+
         <p style="margin: 0; color: #92400e;">Awaiting Response</p>
         <h2 style="margin: 10px 0 0;">{{ statistics['awaiting_response'] }}</h2>
     </div>
 
-    <div style="background: #e8f7ed; padding: 20px; border-radius: 12px;">
+    <div class="stat-card">
         <p style="margin: 0; color: #166534;">Interviews</p>
         <h2 style="margin: 10px 0 0;">{{ statistics['interviews'] }}</h2>
     </div>
 
-    <div style="background: #f1eaff; padding: 20px; border-radius: 12px;">
+    <div class="stat-card">
         <p style="margin: 0; color: #5b21b6;">Selected</p>
         <h2 style="margin: 10px 0 0;">{{ statistics['selected'] }}</h2>
     </div>
@@ -263,7 +296,13 @@
                                     <td>{{ application["role"] }}</td>
                                     <td>{{ application["application_date"] }}</td>
                                     <td>{{ application["deadline"] or "—" }}</td>
-                                    <td>{{ application["status"] }}</td>
+                                    <td>
+                                        <span class="status-badge"
+                                            data-status="{{ application['status'] }}">
+                                         {{ application["status"] }}
+                                        </span>
+                                    </td>
+
 
                                         
 <td>
@@ -301,5 +340,6 @@
             {% endif %}
         </div>
     </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
